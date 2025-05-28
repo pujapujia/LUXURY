@@ -10,11 +10,11 @@
       padding: 20px;
       max-width: 600px;
       margin: auto;
-      background: #f0f2f5;
+      background: #000814;
     }
     h2 {
       text-align: center;
-      color: #333;
+      color: #fcfcfc;
     }
     .input-container {
       display: flex;
@@ -48,8 +48,8 @@
       margin-top: 20px;
     }
     .stats {
-      background: #1e1e1e; /* Warna cokelat gelap */
-      color: #fff; /* Teks putih */
+      background: #3a1e02; /* Warna cokelat gelap kayak JSON tadi */
+      color: #f7f6f6; /* Teks putih biar kontras */
       padding: 15px;
       border-radius: 5px;
       box-shadow: 0 2px 5px rgba(0,0,0,0.1);
@@ -64,9 +64,9 @@
   </style>
 </head>
 <body>
-  <h2>Cek Saldo Airdrop</h2>
+  <h2>LUXURY CHECKER</h2>
   <div class="input-container">
-    <input type="text" id="username" placeholder="Masukkan username">
+    <input type="text" id="username" placeholder="Input username">
     <button onclick="fetchData()">Cek</button>
   </div>
   <p id="error" class="error"></p>
@@ -86,12 +86,12 @@
       outputElement.innerHTML = '';
 
       if (!usernameInput) {
-        errorElement.textContent = 'Masukkan username dulu, bro!';
+        errorElement.textContent = 'input username First, bro!';
         return;
       }
 
       if (!/^[a-zA-Z0-9_]+$/.test(usernameInput)) {
-        errorElement.textContent = 'Username cuma boleh huruf, angka, atau underscore!';
+        errorElement.textContent = 'Usernames can only be letters, numbers or underscores!';
         return;
       }
 
@@ -108,7 +108,7 @@
         const result = await response.json();
 
         if (!result.success) {
-          errorElement.textContent = result.error || 'Username nggak terdaftar!';
+          errorElement.textContent = result.error || 'Username not registered!';
           return;
         }
 
@@ -119,19 +119,19 @@
           <p>Total Referral: ${result.referrals.length}</p>
         `;
         if (result.referrals.length > 0) {
-          output += `<p>Nama Referral yang Di-invite:</p><ul>`;
+          output += `<p>Invited Referral Name:</p><ul>`;
           result.referrals.forEach(ref => {
             output += `<li>${ref}</li>`;
           });
           output += `</ul>`;
         } else {
-          output += `<p>Nama Referral yang Di-invite: Tidak ada</p>`;
+          output += `<p>Invited Referral Name: 0</p>`;
         }
 
         outputElement.innerHTML = output;
       } catch (error) {
         console.error('Error:', error);
-        errorElement.textContent = 'Gagal ambil data! Cek server atau konfigurasi!';
+        errorElement.textContent = 'Failed to fetch data! Check server or configuration!';
       }
     }
   </script>
