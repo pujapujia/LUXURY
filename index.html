@@ -12,9 +12,9 @@
       padding: 20px;
       max-width: 600px;
       margin: auto;
-      background: #0a0a23; /* Latar gelap ala game retro */
+      background: #0a0a23; /* Latar gelap ala Nintendo */
       color: #ffffff;
-      image-rendering: pixelated; /* Efek piksel khas 2D */
+      image-rendering: pixelated; /* Efek piksel */
     }
     h2 {
       text-align: center;
@@ -33,27 +33,27 @@
       font-size: 12px;
       font-family: 'Press Start 2P', cursive;
       border: 4px solid #000000;
-      border-radius: 0; /* Kotak tajam ala retro */
+      border-radius: 0;
       background: #ffffff;
       color: #000000;
-      box-shadow: 4px 4px #000000; /* Bayangan piksel */
+      box-shadow: 4px 4px #000000;
     }
     input {
       flex: 1;
-      background: #e0e0e0; /* Abu-abu terang untuk input */
+      background: #e0e0e0;
     }
     button {
-      background: #00b7eb; /* Biru cerah ala palet Nintendo */
+      background: #00b7eb; /* Biru ala Nintendo */
       color: #000000;
       border: 4px solid #000000;
       cursor: pointer;
     }
     button:hover {
-      background: #0093c4; /* Warna lebih gelap saat hover */
+      background: #0093c4;
       box-shadow: 2px 2px #000000;
     }
     .error {
-      color: #ff4040; /* Merah untuk pesan error */
+      color: #ff4040;
       text-align: center;
       margin: 10px 0;
       text-shadow: 2px 2px #000000;
@@ -63,7 +63,7 @@
       margin-top: 20px;
     }
     .stats {
-      background: #228b22; /* Hijau retro ala Nintendo */
+      background: #228b22; /* Hijau retro */
       color: #ffffff;
       padding: 15px;
       border: 4px solid #000000;
@@ -76,22 +76,20 @@
     .stats ul {
       margin: 10px 0;
       padding-left: 20px;
-    }
-    .stats li {
-      list-style: square;
+      list-style: none; /* Hilangkan bullet default */
     }
     .referral-item {
-      cursor: pointer;
-      padding: 5px;
-      margin: 2px 0;
-      border: 2px solid #000000;
-      background: #ffcc00; /* Kuning cerah ala Nintendo */
+      padding: 8px;
+      margin: 4px 0;
+      background: #ffcc00; /* Kuning ala menu Nintendo */
       color: #000000;
-      display: inline-block;
+      border: 3px solid #000000;
+      display: block;
+      cursor: pointer;
       transition: background 0.2s, box-shadow 0.2s;
     }
-    .referral-item:hover {
-      background: #e6b800; /* Kuning lebih gelap saat hover */
+    .referral-item:hover, .referral-item.focused {
+      background: #e6b800; /* Highlight kuning lebih gelap */
       box-shadow: 3px 3px #000000;
     }
     .referral-item:active {
@@ -113,6 +111,10 @@
   </div>
 
   <script>
+    // Inisialisasi audio
+    const selectSound = new Audio('https://cdn.pixabay.com/audio/2023/08/31/audio_6b6a7a6692.mp3'); // Suara navigasi
+    const confirmSound = new Audio('https://cdn.pixabay.com/audio/2023/08/31/audio_3a2e5f7b9f.mp3'); // Suara konfirmasi
+
     async function fetchData(username = null) {
       const usernameInput = username || document.getElementById('username').value.trim();
       const errorElement = document.getElementById('error');
@@ -132,7 +134,7 @@
         return;
       }
 
-      // Set input field to the clicked username
+      // Set input field
       document.getElementById('username').value = usernameInput;
 
       const timestamp = Date.now();
@@ -152,16 +154,16 @@
           return;
         }
 
-        // Format data as plain text
+        // Format data
         let output = `
           <p>Username: ${result.username}</p>
           <p>Poin: ${result.balanceLXY}</p>
           <p>Total Referral: ${result.referrals.length}</p>
         `;
         if (result.referrals.length > 0) {
-          output += `<p>Invited Referral Name:</p><ul>`;
+          output += `<p>Invited Referral Name:</p><ul id="referral-list">`;
           result.referrals.forEach(ref => {
-            output += `<li><span class="referral-item" onclick="fetchData('${ref}')">${ref}</span></li>`;
+            output += `<li><span class="referral-item" onclick="fetchData('${ref}'); playConfirmSound();" tabindex="0">${ref}</span></li>`;
           });
           output += `</ul>`;
         } else {
@@ -169,9 +171,68 @@
         }
 
         outputElement.innerHTML = output;
+
+        // Inisialisasi navigasi keyboard
+        setupKeyboardNavigation();
       } catch (error) {
         console.error('Error:', error);
         errorElement.textContent = 'Username not registered!';
+      }
+    }
+
+    function playSelectSound() {
+      selectSound.currentTime = 0; // Reset audio
+      selectSound.play().catch(error => console.log('Audio error:', error));
+    }
+
+    function playConfirmSound() {
+      confirmSound.currentTime = 0; // Reset audio
+      confirmSound.play().catch(error => console.log('Audio error:', error));
+    }
+
+    function setupKeyboardNavigation() {
+      const referralList = document.querySelectorAll('.referral-item');
+      let currentIndex = -1;
+
+      // Hapus fokus sebelumnya
+      function clearFocus() {
+        referralList.forEach(item => item.classList.remove('focused'));
+      }
+
+      // Set fokus baru
+      function setFocus(index) {
+        clearFocus();
+        if (index >= 0 && index < referralList.length) {
+          referralList[index].classList.add('focused');
+          referralList[index].focus();
+          currentIndex = index;
+          playSelectSound();
+        }
+      }
+
+      // Event listener untuk navigasi
+      document.addEventListener('keydown', (event) => {
+        if (referralList.length === 0) return;
+
+        if (event.key === 'ArrowDown') {
+          event.preventDefault();
+          const newIndex = currentIndex < referralList.length - 1 ? currentIndex + 1 : 0;
+          setFocus(newIndex);
+        } else if (event.key === 'ArrowUp') {
+          event.preventDefault();
+          const newIndex = currentIndex > 0 ? currentIndex - 1 : referralList.length - 1;
+          setFocus(newIndex);
+        } else if (event.key === 'Enter' && currentIndex >= 0) {
+          event.preventDefault();
+          const selectedUsername = referralList[currentIndex].textContent;
+          fetchData(selectedUsername);
+          playConfirmSound();
+        }
+      });
+
+      // Set fokus awal jika ada referral
+      if (referralList.length > 0) {
+        setFocus(0);
       }
     }
   </script>
