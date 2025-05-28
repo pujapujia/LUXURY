@@ -12,15 +12,15 @@
       padding: 20px;
       max-width: 600px;
       margin: auto;
-      background: #0a0a23; /* Latar gelap ala Nintendo */
-      color: #ffffff;
-      image-rendering: pixelated; /* Efek piksel */
+      background: #c0c0c0; /* Abu-abu terang ala Game Boy */
+      color: #000000;
+      image-rendering: pixelated; /* Efek piksel monokrom */
     }
     h2 {
       text-align: center;
-      color: #ff4040; /* Merah cerah ala Nintendo */
-      text-shadow: 3px 3px #000000;
-      font-size: 20px;
+      color: #000000; /* Hitam untuk kontras */
+      text-shadow: 2px 2px #4a4a4a; /* Abu-abu tua untuk bayangan */
+      font-size: 16px;
       margin-bottom: 20px;
     }
     .input-container {
@@ -30,45 +30,44 @@
     }
     input, button {
       padding: 12px;
-      font-size: 12px;
+      font-size: 10px;
       font-family: 'Press Start 2P', cursive;
-      border: 4px solid #000000;
+      border: 3px solid #000000;
       border-radius: 0;
-      background: #ffffff;
+      background: #9bb7d4; /* Biru keabu-abuan ala Game Boy */
       color: #000000;
-      box-shadow: 4px 4px #000000;
+      box-shadow: 3px 3px #000000;
     }
     input {
       flex: 1;
-      background: #e0e0e0;
+      background: #d9e1d9; /* Abu-abu muda ala layar Game Boy */
     }
     button {
-      background: #00b7eb; /* Biru ala Nintendo */
-      color: #000000;
-      border: 4px solid #000000;
+      background: #4a4a4a; /* Abu-abu tua untuk tombol */
+      color: #ffffff;
       cursor: pointer;
     }
     button:hover {
-      background: #0093c4;
+      background: #2e2e2e; /* Lebih gelap saat hover */
       box-shadow: 2px 2px #000000;
     }
     .error {
-      color: #ff4040;
+      color: #000000;
       text-align: center;
       margin: 10px 0;
-      text-shadow: 2px 2px #000000;
-      font-size: 10px;
+      text-shadow: 1px 1px #4a4a4a;
+      font-size: 8px;
     }
     .result {
       margin-top: 20px;
     }
     .stats {
-      background: #228b22; /* Hijau retro */
-      color: #ffffff;
+      background: #9bb7d4; /* Biru keabu-abuan ala Game Boy */
+      color: #000000;
       padding: 15px;
-      border: 4px solid #000000;
-      box-shadow: 5px 5px #000000;
-      font-size: 10px;
+      border: 3px solid #000000;
+      box-shadow: 4px 4px #000000;
+      font-size: 8px;
     }
     .stats p {
       margin: 5px 0;
@@ -76,12 +75,12 @@
     .stats ul {
       margin: 10px 0;
       padding-left: 20px;
-      list-style: none; /* Hilangkan bullet default */
+      list-style: none;
     }
     .referral-item {
-      padding: 8px;
-      margin: 4px 0;
-      background: #ffcc00; /* Kuning ala menu Nintendo */
+      padding: 6px;
+      margin: 3px 0;
+      background: #d9e1d9; /* Abu-abu muda untuk item */
       color: #000000;
       border: 3px solid #000000;
       display: block;
@@ -89,11 +88,12 @@
       transition: background 0.2s, box-shadow 0.2s;
     }
     .referral-item:hover, .referral-item.focused {
-      background: #e6b800; /* Highlight kuning lebih gelap */
-      box-shadow: 3px 3px #000000;
+      background: #4a4a4a; /* Abu-abu tua saat highlight */
+      color: #ffffff;
+      box-shadow: 2px 2px #000000;
     }
     .referral-item:active {
-      background: #cc9900; /* Efek tekan */
+      background: #2e2e2e; /* Lebih gelap saat klik */
       box-shadow: 1px 1px #000000;
     }
   </style>
@@ -111,9 +111,13 @@
   </div>
 
   <script>
-    // Inisialisasi audio
-    const selectSound = new Audio('https://cdn.pixabay.com/audio/2023/08/31/audio_6b6a7a6692.mp3'); // Suara navigasi
-    const confirmSound = new Audio('https://cdn.pixabay.com/audio/2023/08/31/audio_3a2e5f7b9f.mp3'); // Suara konfirmasi
+    // Inisialisasi audio dengan CDN yang lebih stabil
+    const selectSound = new Audio('https://freesound.org/data/previews/170/170614_1036843-lq.mp3'); // Suara navigasi
+    const confirmSound = new Audio('https://freesound.org/data/previews/170/170613_1036843-lq.mp3'); // Suara konfirmasi
+
+    // Preload audio untuk menghindari delay
+    selectSound.preload = 'auto';
+    confirmSound.preload = 'auto';
 
     async function fetchData(username = null) {
       const usernameInput = username || document.getElementById('username').value.trim();
@@ -181,25 +185,23 @@
     }
 
     function playSelectSound() {
-      selectSound.currentTime = 0; // Reset audio
-      selectSound.play().catch(error => console.log('Audio error:', error));
+      selectSound.currentTime = 0;
+      selectSound.play().catch(error => console.error('Select audio error:', error));
     }
 
     function playConfirmSound() {
-      confirmSound.currentTime = 0; // Reset audio
-      confirmSound.play().catch(error => console.log('Audio error:', error));
+      confirmSound.currentTime = 0;
+      confirmSound.play().catch(error => console.error('Confirm audio error:', error));
     }
 
     function setupKeyboardNavigation() {
       const referralList = document.querySelectorAll('.referral-item');
       let currentIndex = -1;
 
-      // Hapus fokus sebelumnya
       function clearFocus() {
         referralList.forEach(item => item.classList.remove('focused'));
       }
 
-      // Set fokus baru
       function setFocus(index) {
         clearFocus();
         if (index >= 0 && index < referralList.length) {
@@ -210,7 +212,6 @@
         }
       }
 
-      // Event listener untuk navigasi
       document.addEventListener('keydown', (event) => {
         if (referralList.length === 0) return;
 
@@ -230,11 +231,16 @@
         }
       });
 
-      // Set fokus awal jika ada referral
       if (referralList.length > 0) {
         setFocus(0);
       }
     }
+
+    // Preload audio saat halaman dimuat
+    window.addEventListener('load', () => {
+      selectSound.load();
+      confirmSound.load();
+    });
   </script>
 </body>
 </html>
