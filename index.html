@@ -12,15 +12,15 @@
       padding: 20px;
       max-width: 600px;
       margin: auto;
-      background: #c0c0c0; /* Abu-abu terang ala Game Boy */
-      color: #000000;
-      image-rendering: pixelated; /* Efek piksel monokrom */
+      background: #0a0a23; /* Biru tua ala Nintendo */
+      color: #ffffff;
+      image-rendering: pixelated; /* Efek piksel */
     }
     h2 {
       text-align: center;
-      color: #000000; /* Hitam untuk kontras */
-      text-shadow: 2px 2px #4a4a4a; /* Abu-abu tua untuk bayangan */
-      font-size: 16px;
+      color: #ffcc00; /* Kuning cerah ala Pokémon Yellow */
+      text-shadow: 3px 3px #000000;
+      font-size: 18px;
       margin-bottom: 20px;
     }
     .input-container {
@@ -32,41 +32,41 @@
       padding: 12px;
       font-size: 10px;
       font-family: 'Press Start 2P', cursive;
-      border: 3px solid #000000;
+      border: 4px solid #000000;
       border-radius: 0;
-      background: #9bb7d4; /* Biru keabu-abuan ala Game Boy */
+      background: #ffffff;
       color: #000000;
-      box-shadow: 3px 3px #000000;
+      box-shadow: 4px 4px #000000;
     }
     input {
       flex: 1;
-      background: #d9e1d9; /* Abu-abu muda ala layar Game Boy */
+      background: #d9d9d9; /* Abu-abu muda untuk input */
     }
     button {
-      background: #4a4a4a; /* Abu-abu tua untuk tombol */
-      color: #ffffff;
+      background: #00b7eb; /* Biru cerah ala Nintendo */
+      color: #000000;
       cursor: pointer;
     }
     button:hover {
-      background: #2e2e2e; /* Lebih gelap saat hover */
+      background: #0093c4;
       box-shadow: 2px 2px #000000;
     }
     .error {
-      color: #000000;
+      color: #ff4040; /* Merah untuk error */
       text-align: center;
       margin: 10px 0;
-      text-shadow: 1px 1px #4a4a4a;
+      text-shadow: 2px 2px #000000;
       font-size: 8px;
     }
     .result {
       margin-top: 20px;
     }
     .stats {
-      background: #9bb7d4; /* Biru keabu-abuan ala Game Boy */
-      color: #000000;
+      background: #228b22; /* Hijau ala Nintendo */
+      color: #ffffff;
       padding: 15px;
-      border: 3px solid #000000;
-      box-shadow: 4px 4px #000000;
+      border: 4px solid #000000;
+      box-shadow: 5px 5px #000000;
       font-size: 8px;
     }
     .stats p {
@@ -78,9 +78,9 @@
       list-style: none;
     }
     .referral-item {
-      padding: 6px;
-      margin: 3px 0;
-      background: #d9e1d9; /* Abu-abu muda untuk item */
+      padding: 8px;
+      margin: 4px 0;
+      background: #ffcc00; /* Kuning cerah ala menu Nintendo */
       color: #000000;
       border: 3px solid #000000;
       display: block;
@@ -88,12 +88,12 @@
       transition: background 0.2s, box-shadow 0.2s;
     }
     .referral-item:hover, .referral-item.focused {
-      background: #4a4a4a; /* Abu-abu tua saat highlight */
-      color: #ffffff;
-      box-shadow: 2px 2px #000000;
+      background: #e6b800; /* Kuning lebih gelap saat highlight */
+      color: #000000;
+      box-shadow: 3px 3px #000000;
     }
     .referral-item:active {
-      background: #2e2e2e; /* Lebih gelap saat klik */
+      background: #cc9900; /* Efek tekan */
       box-shadow: 1px 1px #000000;
     }
   </style>
@@ -111,11 +111,11 @@
   </div>
 
   <script>
-    // Inisialisasi audio dengan CDN yang lebih stabil
-    const selectSound = new Audio('https://freesound.org/data/previews/170/170614_1036843-lq.mp3'); // Suara navigasi
-    const confirmSound = new Audio('https://freesound.org/data/previews/170/170613_1036843-lq.mp3'); // Suara konfirmasi
+    // Inisialisasi audio dengan CDN yang lebih andal
+    const selectSound = new Audio('https://www.zapsplat.com/wp-content/uploads/2015/sound-effects-61905/zapsplat_multimedia_game_sound_retro_menu_scroll_001_61976.mp3');
+    const confirmSound = new Audio('https://www.zapsplat.com/wp-content/uploads/2015/sound-effects-61905/zapsplat_multimedia_game_sound_retro_menu_select_001_61975.mp3');
 
-    // Preload audio untuk menghindari delay
+    // Preload audio
     selectSound.preload = 'auto';
     confirmSound.preload = 'auto';
 
@@ -167,7 +167,7 @@
         if (result.referrals.length > 0) {
           output += `<p>Invited Referral Name:</p><ul id="referral-list">`;
           result.referrals.forEach(ref => {
-            output += `<li><span class="referral-item" onclick="fetchData('${ref}'); playConfirmSound();" tabindex="0">${ref}</span></li>`;
+            output += `<li><span class="referral-item" tabindex="0">${ref}</span></li>`;
           });
           output += `</ul>`;
         } else {
@@ -212,6 +212,7 @@
         }
       }
 
+      // Event listener untuk navigasi
       document.addEventListener('keydown', (event) => {
         if (referralList.length === 0) return;
 
@@ -231,6 +232,15 @@
         }
       });
 
+      // Klik hanya untuk fokus, tidak langsung fetch
+      referralList.forEach((item, index) => {
+        item.addEventListener('click', (event) => {
+          event.preventDefault();
+          setFocus(index);
+        });
+      });
+
+      // Set fokus awal
       if (referralList.length > 0) {
         setFocus(0);
       }
