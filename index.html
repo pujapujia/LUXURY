@@ -15,6 +15,8 @@
       background: #0a0a23; /* Biru tua ala Nintendo */
       color: #ffffff;
       image-rendering: pixelated; /* Efek piksel */
+      position: relative;
+      overflow-x: hidden;
     }
     h2 {
       text-align: center;
@@ -40,10 +42,10 @@
     }
     input {
       flex: 1;
-      background: #d9d9d9; /* Abu-abu muda untuk input */
+      background: #d9d9d9; /* Abu-abu muda */
     }
     button {
-      background: #00b7eb; /* Biru cerah ala Nintendo */
+      background: #00b7eb; /* Biru cerah */
       color: #000000;
       cursor: pointer;
     }
@@ -80,7 +82,7 @@
     .referral-item {
       padding: 8px;
       margin: 4px 0;
-      background: #ffcc00; /* Kuning cerah ala menu Nintendo */
+      background: #ffcc00; /* Kuning cerah ala menu */
       color: #000000;
       border: 3px solid #000000;
       display: block;
@@ -88,13 +90,32 @@
       transition: background 0.2s, box-shadow 0.2s;
     }
     .referral-item:hover, .referral-item.focused {
-      background: #e6b800; /* Kuning lebih gelap saat highlight */
+      background: #e6b800; /* Kuning lebih gelap */
       color: #000000;
       box-shadow: 3px 3px #000000;
     }
     .referral-item:active {
-      background: #cc9900; /* Efek tekan */
+      background: #cc9900;
       box-shadow: 1px 1px #000000;
+    }
+    /* Animasi sprite Mario */
+    .mario-sprite {
+      position: absolute;
+      bottom: 10px;
+      left: 0;
+      width: 32px;
+      height: 32px;
+      background: url('https://i.imgur.com/0q3dWzv.png') 0 0; /* Sprite sheet Mario */
+      background-size: 128px 32px; /* 4 frame */
+      animation: walk 0.5s steps(4) infinite, move 10s linear infinite;
+    }
+    @keyframes walk {
+      from { background-position: 0 0; }
+      to { background-position: -128px 0; }
+    }
+    @keyframes move {
+      from { left: -32px; }
+      to { left: 100%; }
     }
   </style>
 </head>
@@ -109,15 +130,28 @@
     <h3>Stats User:</h3>
     <div class="stats" id="output"></div>
   </div>
+  <div class="mario-sprite"></div>
 
   <script>
-    // Inisialisasi audio dengan CDN yang lebih andal
-    const selectSound = new Audio('https://www.zapsplat.com/wp-content/uploads/2015/sound-effects-61905/zapsplat_multimedia_game_sound_retro_menu_scroll_001_61976.mp3');
-    const confirmSound = new Audio('https://www.zapsplat.com/wp-content/uploads/2015/sound-effects-61905/zapsplat_multimedia_game_sound_retro_menu_select_001_61975.mp3');
+    // Inisialisasi audio
+    const openingSound = new Audio('https://cdn.pixabay.com/audio/2022/03/10/audio_6b1b39d3a0.mp3'); // Suara pembuka
+    const selectSound = new Audio('https://cdn.pixabay.com/audio/2022/03/10/audio_4b1e4e8f8a.mp3'); // Suara navigasi
+    const confirmSound = new Audio('https://cdn.pixabay.com/audio/2022/03/10/audio_5e0b7f1b2d.mp3'); // Suara konfirmasi
 
     // Preload audio
+    openingSound.preload = 'auto';
     selectSound.preload = 'auto';
     confirmSound.preload = 'auto';
+
+    // Mainkan suara pembuka setelah interaksi pertama
+    let hasInteracted = false;
+    document.addEventListener('click', () => {
+      if (!hasInteracted) {
+        openingSound.currentTime = 0;
+        openingSound.play().catch(error => console.error('Opening audio error:', error));
+        hasInteracted = true;
+      }
+    });
 
     async function fetchData(username = null) {
       const usernameInput = username || document.getElementById('username').value.trim();
@@ -207,12 +241,12 @@
         if (index >= 0 && index < referralList.length) {
           referralList[index].classList.add('focused');
           referralList[index].focus();
+          document.getElementById('username').value = referralList[index].textContent;
           currentIndex = index;
           playSelectSound();
         }
       }
 
-      // Event listener untuk navigasi
       document.addEventListener('keydown', (event) => {
         if (referralList.length === 0) return;
 
@@ -232,7 +266,6 @@
         }
       });
 
-      // Klik hanya untuk fokus, tidak langsung fetch
       referralList.forEach((item, index) => {
         item.addEventListener('click', (event) => {
           event.preventDefault();
@@ -240,14 +273,14 @@
         });
       });
 
-      // Set fokus awal
       if (referralList.length > 0) {
         setFocus(0);
       }
     }
 
-    // Preload audio saat halaman dimuat
+    // Preload audio
     window.addEventListener('load', () => {
+      openingSound.load();
       selectSound.load();
       confirmSound.load();
     });
