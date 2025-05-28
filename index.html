@@ -80,6 +80,24 @@
     .stats li {
       list-style: square;
     }
+    .referral-item {
+      cursor: pointer;
+      padding: 5px;
+      margin: 2px 0;
+      border: 2px solid #000000;
+      background: #ffcc00; /* Kuning cerah ala Nintendo */
+      color: #000000;
+      display: inline-block;
+      transition: background 0.2s, box-shadow 0.2s;
+    }
+    .referral-item:hover {
+      background: #e6b800; /* Kuning lebih gelap saat hover */
+      box-shadow: 3px 3px #000000;
+    }
+    .referral-item:active {
+      background: #cc9900; /* Efek tekan */
+      box-shadow: 1px 1px #000000;
+    }
   </style>
 </head>
 <body>
@@ -95,8 +113,8 @@
   </div>
 
   <script>
-    async function fetchData() {
-      const usernameInput = document.getElementById('username').value.trim();
+    async function fetchData(username = null) {
+      const usernameInput = username || document.getElementById('username').value.trim();
       const errorElement = document.getElementById('error');
       const outputElement = document.getElementById('output');
 
@@ -113,6 +131,9 @@
         errorElement.textContent = 'Usernames can only be letters, numbers or underscores!';
         return;
       }
+
+      // Set input field to the clicked username
+      document.getElementById('username').value = usernameInput;
 
       const timestamp = Date.now();
       const apiUrl = `/api/user/${encodeURIComponent(usernameInput)}?ts=${timestamp}`;
@@ -140,7 +161,7 @@
         if (result.referrals.length > 0) {
           output += `<p>Invited Referral Name:</p><ul>`;
           result.referrals.forEach(ref => {
-            output += `<li>${ref}</li>`;
+            output += `<li><span class="referral-item" onclick="fetchData('${ref}')">${ref}</span></li>`;
           });
           output += `</ul>`;
         } else {
