@@ -5,16 +5,23 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Luxury Airdrop - Check Stats</title>
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
     body {
-      font-family: Arial, sans-serif;
+      font-family: 'Press Start 2P', cursive;
       padding: 20px;
       max-width: 600px;
       margin: auto;
-      background: #000814;
+      background: #1b263b; /* Warna gelap ala game retro */
+      color: #e0e0e0;
+      image-rendering: pixelated; /* Efek piksel retro */
     }
     h2 {
       text-align: center;
-      color: #fcfcfc;
+      color: #ff6b6b; /* Merah cerah ala Nintendo */
+      text-shadow: 2px 2px #000000;
+      font-size: 24px;
+      margin-bottom: 20px;
     }
     .input-container {
       display: flex;
@@ -23,36 +30,45 @@
     }
     input, button {
       padding: 12px;
-      font-size: 16px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
+      font-size: 12px;
+      font-family: 'Press Start 2P', cursive;
+      border: 3px solid #000000;
+      border-radius: 0;
+      box-shadow: 3px 3px #000000; /* Bayangan piksel */
+      background: #ffffff;
+      color: #000000;
     }
     input {
       flex: 1;
+      background: #f0f0f0;
     }
     button {
-      background: #007bff;
-      color: white;
-      border: none;
+      background: #4ecdc4; /* Biru cerah ala palet Nintendo */
+      color: #000000;
+      border: 3px solid #000000;
       cursor: pointer;
     }
     button:hover {
-      background: #0056b3;
+      background: #45b7aa; /* Warna lebih gelap saat hover */
+      box-shadow: 2px 2px #000000;
     }
     .error {
-      color: red;
+      color: #ff6b6b; /* Merah untuk error */
       text-align: center;
       margin: 10px 0;
+      text-shadow: 1px 1px #000000;
+      font-size: 10px;
     }
     .result {
       margin-top: 20px;
     }
     .stats {
-      background: #3a1e02; 
-      color: #f7f6f6; /* 
+      background: #2a9d8f; /* Hijau retro */
+      color: #ffffff;
       padding: 15px;
-      border-radius: 5px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      border: 3px solid #000000;
+      box-shadow: 4px 4px #000000;
+      font-size: 10px;
     }
     .stats p {
       margin: 5px 0;
@@ -60,6 +76,9 @@
     .stats ul {
       margin: 10px 0;
       padding-left: 20px;
+    }
+    .stats li {
+      list-style: square;
     }
   </style>
 </head>
