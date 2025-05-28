@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Luxury Airdrop - Check Stats</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      max-width: 600px;
+      margin: auto;
+      background: #f0f2f5;
+    }
+    h2 {
+      text-align: center;
+      color: #333;
+    }
+    .input-container {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    input, button {
+      padding: 12px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    input {
+      flex: 1;
+    }
+    button {
+      background: #007bff;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #0056b3;
+    }
+    .error {
+      color: red;
+      text-align: center;
+      margin: 10px 0;
+    }
+    .result {
+      margin-top: 20px;
+    }
+    .stats {
+      background: #1e1e1e; /* Warna cokelat gelap */
+      color: #fff; /* Teks putih */
+      padding: 15px;
+      border-radius: 5px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    .stats p {
+      margin: 5px 0;
+    }
+    .stats ul {
+      margin: 10px 0;
+      padding-left: 20px;
+    }
+  </style>
+</head>
+<body>
+  <h2>Cek Saldo Airdrop</h2>
+  <div class="input-container">
+    <input type="text" id="username" placeholder="Masukkan username">
+    <button onclick="fetchData()">Cek</button>
+  </div>
+  <p id="error" class="error"></p>
+  <div class="result">
+    <h3>Stats User:</h3>
+    <div class="stats" id="output"></div>
+  </div>
+
+  <script>
+    async function fetchData() {
+      const usernameInput = document.getElementById('username').value.trim();
+      const errorElement = document.getElementById('error');
+      const outputElement = document.getElementById('output');
+
+      // Reset display
+      errorElement.textContent = '';
+      outputElement.innerHTML = '';
+
+      if (!usernameInput) {
+        errorElement.textContent = 'Masukkan username dulu, bro!';
+        return;
+      }
+
+      if (!/^[a-zA-Z0-9_]+$/.test(usernameInput)) {
+        errorElement.textContent = 'Username cuma boleh huruf, angka, atau underscore!';
+        return;
+      }
+
+      const timestamp = Date.now();
+      const apiUrl = `/api/user/${encodeURIComponent(usernameInput)}?ts=${timestamp}`;
+
+      console.log(`[DEBUG] Fetching from: ${apiUrl}`);
+
+      try {
+        const response = await fetch(apiUrl);
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status ${response.status}`);
+        }
+        const result = await response.json();
+
+        if (!result.success) {
+          errorElement.textContent = result.error || 'Username nggak terdaftar!';
+          return;
+        }
+
+        // Format data as plain text
+        let output = `
+          <p>Username: ${result.username}</p>
+          <p>Poin: ${result.balanceLXY}</p>
+          <p>Total Referral: ${result.referrals.length}</p>
+        `;
+        if (result.referrals.length > 0) {
+          output += `<p>Nama Referral yang Di-invite:</p><ul>`;
+          result.referrals.forEach(ref => {
+            output += `<li>${ref}</li>`;
+          });
+          output += `</ul>`;
+        } else {
+          output += `<p>Nama Referral yang Di-invite: Tidak ada</p>`;
+        }
+
+        outputElement.innerHTML = output;
+      } catch (error) {
+        console.error('Error:', error);
+        errorElement.textContent = 'Gagal ambil data! Cek server atau konfigurasi!';
+      }
+    }
+  </script>
+</body>
+</html>
