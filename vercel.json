@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    {
+      "source": "/api/:path*",
+      "destination": "https://luxury-airdrop.onrender.com/api/:path*"
+    }
+  ]
+}
